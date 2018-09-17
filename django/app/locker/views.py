@@ -113,12 +113,19 @@ class ReserveDeleteView(DeleteView):
     model = models.Reserve
     success_url = reverse_lazy('locker:reserve-list')
     
-# Historic create view
+# Historic list view
 #--------------------    
-class HistoricCreateView(ListView):
+class HistoricView(ListView):
 
     model = models.Reserve
     template_name = 'locker/reserve/historic.html'
+
+    def get_context_data(self, **kwargs):
+        if self.request.user.is_staff:
+            kwargs['object_list'] = models.Reserve.objects.all()
+        else:
+            kwargs['object_list'] = models.Reserve.objects.filter(user = self.request.user)
+        return super(HistoricView, self).get_context_data(**kwargs) 
 
 # Rate create view
 #--------------------
@@ -128,9 +135,9 @@ class RateCreateView(CreateView):
     template_name = 'locker/projector/rate.html'
     success_url = reverse_lazy('locker:reserve-list')
     fields = ['rate']
-
-    def get(self, request):
-        #TODO pegar a reserva que foi clicada
-        r = model.Reserve
-        reserva = r.objects.filter()
     
+    #TODO pegar o projetor da avaliação
+
+    def post(self, request):
+        r = models.Rate.objects.create(user=self.request.user)
+        r.projector = 

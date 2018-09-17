@@ -18,7 +18,7 @@ urlpatterns = [
     path('reserva/novo/', locker.ReserveCreateView.as_view(), name='reserve-create'),
     path('reservas/', locker.ReserveView.as_view(), name='reserve-list'),
     path('reserva/<uuid:pk>/apagar/', locker.ReserveDeleteView.as_view(), name='reserve-delete'),
-    path('reserva/historico/', locker.HistoricCreateView.as_view(), name='reserve-historic'),
+    path('reserva/historico/', locker.HistoricView.as_view(), name='reserve-historic'),
 
     # Rate
     path('comentario/<uuid:pk>/novo/', locker.RateCreateView.as_view(), name='rate-create')

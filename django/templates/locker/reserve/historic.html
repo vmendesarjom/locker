@@ -31,7 +31,7 @@
                   <td>{{ forloop.counter }}</td>
                   <td>{{ obj.user.first_name }}</td>
                   <td>{{ obj.date }}</td>
-                  <td><a href="{% url 'locker:rate-create' obj.id%}">{{ obj.projector }}</a></td>
+                  <td><a href="{% url 'locker:rate-create' obj.projector.id %}">{{ obj.projector }}</a></td>
                   <td>
                   {% for s in obj.slots.all|dictsort:"name" %}
                     {{ s.name }}
