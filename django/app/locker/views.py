@@ -10,6 +10,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from django.urls import reverse_lazy, reverse
 
+from datetime import date
+
 from . import models
 
 # Projectors list view
@@ -46,10 +48,18 @@ class ReserveView(ListView):
     template_name = 'locker/reserve/list.html'
 
     def get_context_data(self, **kwargs):
+        data = date.today()
+        object_list = []
         if self.request.user.is_staff:
-            kwargs['object_list'] = models.Reserve.objects.all()
+            for x in models.Reserve.objects.all():
+                if(x.date >= data):
+                    object_list.append(x)
+            kwargs['object_list'] = object_list
         else:
-            kwargs['object_list'] = models.Reserve.objects.filter(user = self.request.user)
+            for x in models.Reserve.objects.filter(user = self.request.user):
+                if(x.date >= data):
+                    object_list.append(x)
+            kwargs['object_list'] = object_list
         return super(ReserveView, self).get_context_data(**kwargs) 
 
 # Reserve create view
@@ -120,13 +130,22 @@ class HistoricView(ListView):
     model = models.Reserve
     template_name = 'locker/reserve/historic.html'
 
+    
     def get_context_data(self, **kwargs):
+        data = date.today()
+        object_list = []
         if self.request.user.is_staff:
-            kwargs['object_list'] = models.Reserve.objects.all()
+            for x in models.Reserve.objects.all():
+                if(x.date < data):
+                    object_list.append(x)
+            kwargs['object_list'] = object_list
         else:
-            kwargs['object_list'] = models.Reserve.objects.filter(user = self.request.user)
+            for x in models.Reserve.objects.filter(user = self.request.user):
+                if(x.date < data):
+                    object_list.append(x)
+            kwargs['object_list'] = object_list
         return super(HistoricView, self).get_context_data(**kwargs) 
-
+    
 # Rate create view
 #--------------------
 class RateCreateView(CreateView):
@@ -136,8 +155,14 @@ class RateCreateView(CreateView):
     success_url = reverse_lazy('locker:reserve-list')
     fields = ['rate']
     
-    #TODO pegar o projetor da avaliação
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.user = self.request.user
+        obj.projector = models.Projector.objects.first()
+        obj.save()
+        return super(RateCreateView, self).form_valid(form)
 
-    def post(self, request):
-        r = models.Rate.objects.create(user=self.request.user)
-        r.projector = 
+# Rate view
+#------------------
+class RateView(ListView):
+    
