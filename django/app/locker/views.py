@@ -60,6 +60,7 @@ class ReserveView(ListView):
                 if(x.date >= data):
                     object_list.append(x)
             kwargs['object_list'] = object_list
+            #kwargs['object_list'] = models.Reserve.objects.filter(date__gte=data, user=self.request.user, )
         return super(ReserveView, self).get_context_data(**kwargs) 
 
 # Reserve create view
@@ -132,15 +133,27 @@ class HistoricView(ListView):
 
     
     def get_context_data(self, **kwargs):
+        #print(self.request.GET['search'])
+        if 'search' in self.request.GET:
+            reserves = models.Reserve.objects.filter(projector__tipping=self.request.GET['search'])
+        else:
+            reserves = models.Reserve.objects.all()
+
+        if 'search-date' in self.request.GET:
+            reserves = models.Reserve.objects.filter(date=self.request.GET['search-date'])
+        else:
+            reserves = models.Reserve.objects.all()
+            print('tem search')
+
         data = date.today()
         object_list = []
         if self.request.user.is_staff:
-            for x in models.Reserve.objects.all():
+            for x in reserves:
                 if(x.date < data):
                     object_list.append(x)
             kwargs['object_list'] = object_list
         else:
-            for x in models.Reserve.objects.filter(user = self.request.user):
+            for x in reserves.filter(user = self.request.user):
                 if(x.date < data):
                     object_list.append(x)
             kwargs['object_list'] = object_list
@@ -158,11 +171,13 @@ class RateCreateView(CreateView):
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.user = self.request.user
-        obj.projector = models.Projector.objects.first()
+        obj.projector = models.Projector.objects.get(pk=self.kwargs['pk'])
         obj.save()
         return super(RateCreateView, self).form_valid(form)
 
 # Rate view
 #------------------
 class RateView(ListView):
-    
+
+    model = models.Rate
+    template_name = 'locker/projector/list_rate.html'

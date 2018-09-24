@@ -21,6 +21,6 @@ urlpatterns = [
     path('reserva/historico/', locker.HistoricView.as_view(), name='reserve-historic'),
 
     # Rate
-    path('comentario/<uuid:pk>/novo/', locker.RateCreateView.as_view(), name='rate-create')
-    
+    path('comentario/<uuid:pk>/novo/', locker.RateCreateView.as_view(), name='rate-create'),
+    path('comentarios/', locker.RateView.as_view(), name='rate-list'),
 ]

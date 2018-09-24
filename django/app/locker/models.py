@@ -57,7 +57,7 @@ class Rate (CreateUpdateModel):
 	projector = models.ForeignKey('Projector', on_delete=models.CASCADE, null=False, verbose_name='Projetor')
 
 	def __str__(self):
-		return self.first_name
+		return self.projector.tipping
 
 	class Meta:
 		verbose_name = 'Avaliação'
