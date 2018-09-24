@@ -140,10 +140,7 @@ class HistoricView(ListView):
             reserves = models.Reserve.objects.all()
 
         if 'search-date' in self.request.GET:
-            reserves = models.Reserve.objects.filter(date=self.request.GET['search-date'])
-        else:
-            reserves = models.Reserve.objects.all()
-            print('tem search')
+            reserves = reserves.filter(date=self.request.GET['search-date'])
 
         data = date.today()
         object_list = []
