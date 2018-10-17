@@ -6,6 +6,9 @@
     <h1>
       Histórico
     </h1>
+    <ol class="breadcrumb">
+      <a href="{% url 'locker:reserve-historic-pdf' %}" class="btn btn-sm btn-danger pull-right">Gerar PDF</a>
+    </ol>
   </section>
 
   <!-- Main content -->
@@ -59,6 +62,10 @@
           </tbody>
         </table>
       </div>
+      <!--
+      <ol class="breadcrumb">
+        <a href="{% url 'locker:reserve-historic-pdf' %}" class="btn btn-sm btn-danger pull-right">PDF</a>
+      </ol> -->
       <!-- /.box-body -->
       <div class="box-footer">
         Footer

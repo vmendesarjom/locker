@@ -1,8 +1,13 @@
+
+from django.views.generic import View
 from datetime import datetime, timedelta
 
 from django.shortcuts import render
 
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+
+from django.core.files.storage import FileSystemStorage
 
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -13,6 +18,9 @@ from django.urls import reverse_lazy, reverse
 from datetime import date
 
 from . import models
+from . import tasks
+
+from .teste import render_pdf
 
 # Projectors list view
 #-------------------
@@ -114,6 +122,7 @@ class ReserveCreateView(TemplateView):
                     for d in data['d_' + str(day)]:
                         r.slots.add(d)
                     r.save()
+                    tasks.send_email.delay('chuchu')
                 
         return HttpResponseRedirect(reverse('locker:reserve-list'))
 
@@ -125,13 +134,12 @@ class ReserveDeleteView(DeleteView):
     success_url = reverse_lazy('locker:reserve-list')
     
 # Historic list view
-#--------------------    
+#-------------------    
 class HistoricView(ListView):
 
     model = models.Reserve
     template_name = 'locker/reserve/historic.html'
 
-    
     def get_context_data(self, **kwargs):
         #print(self.request.GET['search'])
         if 'search' in self.request.GET:
@@ -155,9 +163,18 @@ class HistoricView(ListView):
                     object_list.append(x)
             kwargs['object_list'] = object_list
         return super(HistoricView, self).get_context_data(**kwargs) 
+
+# Historic list view
+#-------------------
+class HistoricFileView(View): 
+
+    def get(self, request, *args, **kwargs):
+        dados = models.Reserve.objects.all()
+        pdf = render_pdf("locker/reserve/historic_pdf.html", {"dados": dados})
+        return HttpResponse(pdf, content_type="application/pdf")
     
 # Rate create view
-#--------------------
+#-------------------
 class RateCreateView(CreateView):
 
     model = models.Rate
@@ -173,8 +190,10 @@ class RateCreateView(CreateView):
         return super(RateCreateView, self).form_valid(form)
 
 # Rate view
-#------------------
+#-------------------
 class RateView(ListView):
 
     model = models.Rate
     template_name = 'locker/projector/list_rate.html'
+
+
