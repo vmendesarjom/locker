@@ -35,28 +35,28 @@
                 <thead>
                     <tr class="success">
                         <td class="text-center">Horário</td>
-                            <td class="text-center">Segunda ({{ days.0|date:"d" }})</td>
-                            <td class="text-center">Terça ({{ days.1|date:"d" }})</td>
-                            <td class="text-center">Quarta ({{ days.2|date:"d" }})</td>
-                            <td class="text-center">Quinta ({{ days.3|date:"d" }})</td>
-                            <td class="text-center">Sexta ({{ days.4|date:"d" }})</td>
+                            {% if invalids <= 0 %} <td class="text-center"> Segunda ({{ days.0|date:"d" }}) </td> {% endif %}
+                            {% if invalids <= 1 %} <td class="text-center"> Terça ({{ days.1|date:"d" }}) </td> {% endif %}
+                            {% if invalids <= 2 %} <td class="text-center">  Quarta ({{ days.2|date:"d" }}) </td> {% endif %}
+                            {% if invalids <= 3 %} <td class="text-center"> Quinta ({{ days.3|date:"d" }}) </td> {% endif %}
+                            {% if invalids <= 4 %} <td class="text-center">  Sexta ({{ days.4|date:"d" }}) </td> {% endif %}
                     </tr>
                 </thead>
                 <tbody class="checkbox-group required">
                   {% for slot in slots %}
                   <tr id="marcadores">
                         <td class="text-center" style="vertical-align:middle"> {{ slot.name }}<br/>{{ slot.start }} - {{ slot.end }}</td>
-                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_0" value= {{ slot.pk }} onclick="pop()"> </td>
-                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_1" value= {{ slot.pk }} onclick="pop()"> </td>
-                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_2" value= {{ slot.pk }} onclick="pop()"> </td>
-                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_3" value= {{ slot.pk }} onclick="pop()"> </td>
-                        <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_4" value= {{ slot.pk }} onclick="pop()"> </td>
+                        {% if invalids <= 0 %} <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_0" value= {{ slot.pk }} onclick="pop()"> </td> {% endif %}
+                        {% if invalids <= 1 %} <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_1" value= {{ slot.pk }} onclick="pop()"> </td> {% endif %}
+                        {% if invalids <= 2 %} <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_2" value= {{ slot.pk }} onclick="pop()"> </td> {% endif %}
+                        {% if invalids <= 3 %} <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_3" value= {{ slot.pk }} onclick="pop()"> </td> {% endif %}
+                        {% if invalids <= 4 %} <td class="text-center" style="vertical-align:middle"> <input type="checkbox" name="d_4" value= {{ slot.pk }} onclick="pop()"> </td> {% endif %}
                     </tr>
                   {% endfor %}  
                   </tbody>
               </table>      
 
-              <button type="submit" class="btn btn-danger pull-right" id="Salvar" disabled >Salvar</button>
+              <button type="submit" class="btn btn-success pull-right" id="Salvar" disabled>Salvar</button>
               <script> 
                 function pop() {
                   const button = document.getElementById("Salvar").disabled
@@ -98,7 +98,7 @@
                   
                 }
               </script>
-              <a href="{% url 'locker:reserve-list' %}" class="btn btn-default">Cancel</a>
+              <a href="{% url 'locker:reserve-list' %}" class="btn btn-danger">Cancel</a>
           </form>    
       </div>
     </div>

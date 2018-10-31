@@ -87,17 +87,18 @@ class ReserveCreateView(TemplateView):
         for day in range(0, date.weekday()):
             days.insert(0, (date - timedelta(days=i)) )
             i += 1
-        
+        invalids = len(days)
+
         i = 0
         for day in range(date.weekday(), 5):
             days.append( (date + timedelta(days=i)) )
             i += 1
-        return days
+        return days, invalids
 
     def get_context_data(self, **kwargs):
         # TODO: Se a data nao vier na URL
         # Days
-        kwargs['days'] = self.get_days()
+        kwargs['days'], kwargs['invalids'] = self.get_days()
 
         # Projector type
         kwargs['types'] = models.Projector.TYPE
@@ -141,27 +142,23 @@ class HistoricView(ListView):
     template_name = 'locker/reserve/historic.html'
 
     def get_context_data(self, **kwargs):
-        #print(self.request.GET['search'])
-        if 'search' in self.request.GET:
+        if 'search' in self.request.GET and self.request.GET['search'] != '':
             reserves = models.Reserve.objects.filter(projector__tipping=self.request.GET['search'])
         else:
             reserves = models.Reserve.objects.all()
 
-        if 'search-date' in self.request.GET:
-            reserves = reserves.filter(date=self.request.GET['search-date'])
+        if 'SearchDateStart' in self.request.GET and 'SearchDateEnd' in self.request.GET and self.request.GET['SearchDateStart'] != '' and self.request.GET['SearchDateEnd']:
+            reserves = reserves.filter(date__range=(self.request.GET['SearchDateStart'], self.request.GET['SearchDateEnd']))
 
-        data = date.today()
-        object_list = []
-        if self.request.user.is_staff:
-            for x in reserves:
-                if(x.date < data):
-                    object_list.append(x)
-            kwargs['object_list'] = object_list
-        else:
-            for x in reserves.filter(user = self.request.user):
-                if(x.date < data):
-                    object_list.append(x)
-            kwargs['object_list'] = object_list
+        elif 'SearchDateStart' in self.request.GET and self.request.GET['SearchDateStart'] != '':
+            reserves = reserves.filter(date__gte=self.request.GET['SearchDateStart'])
+
+        elif 'SearchDateEnd' in self.request.GET and self.request.GET['SearchDateEnd'] != '':
+            reserves = reserves.filter(date__lte=self.request.GET['SearchDateEnd'])
+
+        if not self.request.user.is_staff:
+            reserves = reserves.filter(user=self.request.user)
+        kwargs['object_list'] = reserves
         return super(HistoricView, self).get_context_data(**kwargs) 
 
 # Historic list view
