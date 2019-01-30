@@ -9,7 +9,7 @@ O projeto é composto pela aplicação *core* composta basicamente pelas classes
 
 ### CreateUpdateModel
 
-Classe composta basicamente pelos atributos de data de criação (created_at) e data da última atualização (updated_at). Além disso ela defini o *id* como sendo um UUID.
+Classe composta basicamente pelos atributos de data de criação (created_at) e data da última atualização (updated_at). Além disso ela define o *id* como sendo um UUID.
 
 ```python
 class CreateUpdateModel(models.Model):
