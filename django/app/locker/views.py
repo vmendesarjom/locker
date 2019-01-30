@@ -116,7 +116,8 @@ class ReserveCreateView(TemplateView):
         
         for day in range(5):
             if ('d_' + str(day)) in self.request.POST:
-                projs = models.Projector.objects.filter(type__in=data['type']).exclude(reserves__date=days[day], reserves__slots__in=data['d_' + str(day)])
+                projs = models.Projector.objects.filter(type__in=data['type']).exclude(reserves__date=days[day], 
+                                                                                       reserves__slots__in=data['d_' + str(day)])
                 if len(projs) > 0:
                     proj = projs[0]
                     r = models.Reserve.objects.create(user=self.request.user, date=days[day], projector=proj)
