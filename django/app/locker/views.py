@@ -148,8 +148,9 @@ class HistoricView(ListView):
         else:
             reserves = models.Reserve.objects.all()
 
-        if 'SearchDateStart' in self.request.GET and 'SearchDateEnd' in self.request.GET and self.request.GET['SearchDateStart'] != '' and self.request.GET['SearchDateEnd']:
-            reserves = reserves.filter(date__range=(self.request.GET['SearchDateStart'], self.request.GET['SearchDateEnd']))
+        if 'SearchDateStart' in self.request.GET and 'SearchDateEnd' in self.request.GET and 
+            self.request.GET['SearchDateStart'] != '' and self.request.GET['SearchDateEnd']:
+                reserves = reserves.filter(date__range=(self.request.GET['SearchDateStart'], self.request.GET['SearchDateEnd']))
 
         elif 'SearchDateStart' in self.request.GET and self.request.GET['SearchDateStart'] != '':
             reserves = reserves.filter(date__gte=self.request.GET['SearchDateStart'])
